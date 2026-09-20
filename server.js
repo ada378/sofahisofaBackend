@@ -33,6 +33,8 @@ app.use(compression()); // Compress responses (saves 60-80% bandwidth)
 
 const allowedOrigins = [
   process.env.CLIENT_URL,
+  "https://www.thesofahisofa.com",
+  "https://thesofahisofa.com",
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5175",
