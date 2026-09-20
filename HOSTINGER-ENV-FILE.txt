@@ -1,0 +1,26 @@
+NODE_ENV=production
+PORT=5000
+
+MONGO_URI=mongodb+srv://adarsh03542_db_user:TTGN9Tzll8KDcQVy@sofahisofa.osv0yii.mongodb.net/?appName=SofahiSofa
+
+JWT_SECRET=dev_secret_key_sofa_hi_sofa_2026_super_secure_random
+JWT_EXPIRES_IN=7d
+COOKIE_EXPIRES_DAYS=7
+
+CLIENT_URL=https://www.thesofahisofa.com
+SITE_URL=https://www.thesofahisofa.com
+
+ADMIN_NAME=Sofa Hi Sofa Admin
+ADMIN_EMAIL=admin@sofahisofa.com
+ADMIN_PHONE=9999999999
+ADMIN_PASSWORD=Admin@SofaHiSofa2026
+
+SEO_EMAIL=seo@sofahisofa.com
+SEO_PASSWORD=Seo@SofaHiSofa2026
+
+CLOUDINARY_CLOUD_NAME=dgoe6emli
+CLOUDINARY_API_KEY=691483461292698
+CLOUDINARY_API_SECRET=kjx0fkzxGQZChwTYTINErnhBsgg
+
+RAZORPAY_KEY_ID=
+RAZORPAY_KEY_SECRET=

@@ -18,23 +18,84 @@ export const register = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
 
+    // Log incoming data (remove in production)
+    console.log("📝 Registration attempt:", { name, email: email?.toLowerCase(), phone: phone?.trim() });
+
+    // Validate required fields
     if (!name || !email || !phone || !password) {
+      console.log("❌ Missing required fields");
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const emailExists = await User.findOne({ email: email.toLowerCase().trim() });
-    if (emailExists) return res.status(400).json({ message: "This email is already registered. Please login." });
+    // Validate password length
+    if (password.length < 6) {
+      console.log("❌ Password too short");
+      return res.status(400).json({ message: "Password must be at least 6 characters long" });
+    }
 
-    const phoneExists = await User.findOne({ phone: phone.trim() });
-    if (phoneExists) return res.status(400).json({ message: "This phone number is already registered." });
+    // Check email with case-insensitive search
+    const emailToCheck = email.toLowerCase().trim();
+    console.log("🔍 Checking email:", emailToCheck);
+    
+    const emailExists = await User.findOne({ email: emailToCheck });
+    if (emailExists) {
+      console.log("❌ Email already exists:", emailToCheck);
+      return res.status(400).json({ message: "This email is already registered. Please login." });
+    }
 
-    const user = await User.create({ name, email: email.toLowerCase().trim(), phone: phone.trim(), password });
+    // Check phone
+    const phoneToCheck = phone.trim();
+    console.log("🔍 Checking phone:", phoneToCheck);
+    
+    const phoneExists = await User.findOne({ phone: phoneToCheck });
+    if (phoneExists) {
+      console.log("❌ Phone already exists:", phoneToCheck);
+      return res.status(400).json({ message: "This phone number is already registered." });
+    }
+
+    // Create user
+    console.log("✅ Creating new user...");
+    const user = await User.create({ 
+      name: name.trim(), 
+      email: emailToCheck, 
+      phone: phoneToCheck, 
+      password,
+      role: "customer"
+    });
+    
+    console.log("✅ User created successfully:", user._id, user.email);
+    
     const token = signToken(user._id);
     sendTokenCookie(res, token);
-    res.status(201).json({ _id: user._id, name: user.name, email: user.email, role: user.role, token });
+    
+    res.status(201).json({ 
+      _id: user._id, 
+      name: user.name, 
+      email: user.email, 
+      role: user.role, 
+      token 
+    });
+    
+    console.log("✅ Registration response sent successfully");
+    
   } catch (err) {
-    console.error("Register error:", err.message);
-    res.status(500).json({ message: "Registration failed. Please try again." });
+    console.error("❌ Register error:", err.message);
+    console.error("❌ Error stack:", err.stack);
+    console.error("❌ Error name:", err.name);
+    
+    // Send more specific error message
+    if (err.code === 11000) {
+      // Duplicate key error
+      const field = Object.keys(err.keyPattern)[0];
+      return res.status(400).json({ 
+        message: `This ${field} is already registered.` 
+      });
+    }
+    
+    res.status(500).json({ 
+      message: "Registration failed. Please try again.",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined
+    });
   }
 };
 
