@@ -17,7 +17,7 @@ const productSchema = new mongoose.Schema(
     slug: { type: String, unique: true, index: true }, // used for SEO friendly URLs: /product/:slug
     sku: { type: String, unique: true, required: true },
 
-    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true, index: true },
     subCategory: { type: String }, // e.g. "3 Seater Sofa", "L Shape Sofa"
 
     description: { type: String, required: true },
@@ -93,5 +93,12 @@ productSchema.pre("save", function (next) {
 
 // text index for search bar ("sofa", "recliner", "sheesham bed" etc.)
 productSchema.index({ name: "text", description: "text", subCategory: "text" });
+
+// Performance indexes for frequent filters
+productSchema.index({ category: 1, price: 1 });
+productSchema.index({ isBestSeller: 1 });
+productSchema.index({ isFeatured: 1 });
+productSchema.index({ isNewLaunch: 1 });
+productSchema.index({ createdAt: -1 });
 
 export default mongoose.model("Product", productSchema);

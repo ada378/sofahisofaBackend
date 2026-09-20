@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
 import xss from "xss-clean";
+import compression from "compression";
 
 import connectDB from "./config/db.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
@@ -28,6 +29,7 @@ const app = express();
 
 // --- security & core middleware ---
 app.use(helmet());
+app.use(compression()); // Compress responses (saves 60-80% bandwidth)
 
 const allowedOrigins = [
   process.env.CLIENT_URL,
