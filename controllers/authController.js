@@ -103,19 +103,62 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    
+    console.log("🔐 Login attempt:", { email: email?.toLowerCase(), hasPassword: !!password });
+    
+    // Validate inputs
     if (!email || !password) {
+      console.log("❌ Missing email or password");
       return res.status(400).json({ message: "Email and password are required" });
     }
-    const user = await User.findOne({ email: email.toLowerCase().trim() }).select("+password");
-    if (!user || !(await user.comparePassword(password))) {
+
+    // Find user
+    const emailToCheck = email.toLowerCase().trim();
+    console.log("🔍 Looking for user:", emailToCheck);
+    
+    const user = await User.findOne({ email: emailToCheck }).select("+password");
+    
+    if (!user) {
+      console.log("❌ User not found:", emailToCheck);
       return res.status(401).json({ message: "Invalid email or password" });
     }
+    
+    console.log("✅ User found:", user._id, user.email, user.role);
+    
+    // Verify password
+    console.log("🔒 Verifying password...");
+    const isPasswordMatch = await user.comparePassword(password);
+    
+    if (!isPasswordMatch) {
+      console.log("❌ Password mismatch");
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+    
+    console.log("✅ Password verified");
+    
+    // Generate token
     const token = signToken(user._id);
     sendTokenCookie(res, token);
-    res.json({ _id: user._id, name: user.name, email: user.email, role: user.role, token });
+    
+    console.log("✅ Login successful, sending response");
+    
+    res.json({ 
+      _id: user._id, 
+      name: user.name, 
+      email: user.email, 
+      role: user.role, 
+      token 
+    });
+    
   } catch (err) {
-    console.error("Login error:", err.message);
-    res.status(500).json({ message: "Login failed. Please try again." });
+    console.error("❌ Login error:", err.message);
+    console.error("❌ Error stack:", err.stack);
+    console.error("❌ Error name:", err.name);
+    
+    res.status(500).json({ 
+      message: "Login failed. Please try again.",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined
+    });
   }
 };
 
