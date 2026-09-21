@@ -71,6 +71,12 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/seo", seoApiRoutes);
 app.use("/api/bulk-upload", bulkUploadRoutes);
 
+app.get("/", (req, res) => res.json({ 
+  status: "ok", 
+  message: "Sofa Hi Sofa Backend API",
+  version: "1.0.0"
+}));
+
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
 app.use(notFound);
