@@ -34,7 +34,13 @@ const productSchema = new mongoose.Schema(
     warranty: { type: String, default: "3 Year Warranty" },
 
     price: { type: Number, required: true }, // selling price
-    marketPrice: { type: Number, required: true }, // MRP (strike-through price)
+    marketPrice: {
+      type: Number,
+      required: false,
+      default: function () {
+        return this.price;
+      },
+    }, // MRP optional
     discountPercent: {
       type: Number,
       default: function () {
