@@ -23,6 +23,7 @@ import seoRoutes from "./routes/seoRoutes.js";
 import seoApiRoutes from "./routes/seoApiRoutes.js";
 import bulkUploadRoutes from "./routes/bulkUploadRoutes.js";
 import leadRoutes from "./routes/leadRoutes.js";
+import blogRoutes from "./routes/blogRoutes.js";
 
 connectDB();
 
@@ -72,6 +73,7 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/seo", seoApiRoutes);
 app.use("/api/bulk-upload", bulkUploadRoutes);
 app.use("/api/leads", leadRoutes);
+app.use("/api/blogs", blogRoutes);
 
 app.get("/", (req, res) => res.json({ 
   status: "ok", 
