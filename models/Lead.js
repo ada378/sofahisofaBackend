@@ -23,6 +23,11 @@ const leadSchema = new mongoose.Schema(
       default: 'popup',
       enum: ['popup', 'contact-form', 'checkout', 'other']
     },
+    requirement: {
+      type: String,
+      default: '',
+      enum: ['', 'Sofa Set', 'L-Shape Sofa', 'Recliner', 'Solid Wood Bed', 'Dining Table Set', 'Accent Chair', 'Center Table', 'Other'],
+    },
     status: {
       type: String,
       default: 'new',

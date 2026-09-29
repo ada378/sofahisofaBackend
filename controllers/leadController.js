@@ -5,7 +5,7 @@ import Lead from '../models/Lead.js';
 // @access  Public
 export const createLead = async (req, res) => {
   try {
-    const { name, phone, source } = req.body;
+    const { name, phone, source, requirement } = req.body;
 
     if (!name || !phone) {
       return res.status(400).json({ message: 'Name and phone are required' });
@@ -28,7 +28,8 @@ export const createLead = async (req, res) => {
     const lead = await Lead.create({
       name,
       phone,
-      source: source || 'popup'
+      source: source || 'popup',
+      requirement: requirement || ''
     });
 
     res.status(201).json({
