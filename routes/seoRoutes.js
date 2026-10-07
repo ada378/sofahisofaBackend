@@ -4,7 +4,7 @@ import Category from "../models/Category.js";
 import SeoSettings from "../models/SeoSettings.js";
 
 const router = express.Router();
-const SITE_URL = process.env.SITE_URL || "https://www.sofahisofa.com";
+const SITE_URL = process.env.SITE_URL || "https://www.thesofahisofa.com";
 
 // GET /sitemap.xml — dynamically built from live catalog
 router.get("/sitemap.xml", async (req, res) => {
