@@ -77,10 +77,14 @@ router.get("/robots.txt", async (req, res) => {
 
     const defaultRobots = `User-agent: *
 Allow: /
-Disallow: /cart
+
+# Private and non-public areas
+Disallow: /admin/
+Disallow: /seo/
 Disallow: /checkout
 Disallow: /account
-Disallow: /admin
+Disallow: /my-orders
+Disallow: /cart
 Disallow: /api/${sitemapLine}`;
 
     res.type("text/plain");
@@ -88,7 +92,20 @@ Disallow: /api/${sitemapLine}`;
     res.send(customRobots || defaultRobots);
   } catch {
     res.type("text/plain");
-    res.send(`User-agent: *\nAllow: /\nDisallow: /cart\nDisallow: /admin\n\nSitemap: ${SITE_URL}/sitemap.xml`);
+    res.send(`User-agent: *
+Allow: /
+
+# Private and non-public areas
+Disallow: /admin/
+Disallow: /seo/
+Disallow: /checkout
+Disallow: /account
+Disallow: /my-orders
+Disallow: /cart
+Disallow: /api/
+
+# XML sitemap
+Sitemap: ${SITE_URL}/sitemap.xml`);
   }
 });
 

@@ -52,6 +52,25 @@ const categoryStorage = new CloudinaryStorage({
   },
 });
 
+// Blog images storage
+const blogStorage = new CloudinaryStorage({
+  cloudinary: getCloudinary(),
+  params: async (req, file) => {
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 8);
+    const cleanName = (file.originalname || "blog")
+      .replace(/\.[^/.]+$/, "")
+      .replace(/[^a-zA-Z0-9]/g, "_")
+      .substring(0, 25);
+    return {
+      folder: "sofahisofa/blogs",
+      allowed_formats: ["jpg", "jpeg", "png", "webp"],
+      public_id: `${cleanName}_${timestamp}_${random}`,
+      transformation: [{ width: 1200, height: 800, crop: "limit", quality: "auto:good", fetch_format: "auto" }],
+    };
+  },
+});
+
 export const uploadProductImages = multer({
   storage: productStorage,
   limits: { fileSize: 8 * 1024 * 1024 },
@@ -60,6 +79,11 @@ export const uploadProductImages = multer({
 export const uploadCategoryImage = multer({
   storage: categoryStorage,
   limits: { fileSize: 4 * 1024 * 1024 },
+}).single("image");
+
+export const uploadBlogImage = multer({
+  storage: blogStorage,
+  limits: { fileSize: 8 * 1024 * 1024 },
 }).single("image");
 
 export { cloudinary };

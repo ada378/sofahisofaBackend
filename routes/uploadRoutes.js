@@ -8,6 +8,7 @@ import {
 import {
   uploadProductImages,
   uploadCategoryImage,
+  uploadBlogImage,
 } from "../config/cloudinary.js";
 
 const router = express.Router();
@@ -38,6 +39,15 @@ router.post(
   protect,
   admin,
   handleMulterError(uploadCategoryImage),
+  uploadCategoryImageCtrl
+);
+
+// POST /api/upload/blog-image — single image for blogs
+router.post(
+  "/blog-image",
+  protect,
+  admin,
+  handleMulterError(uploadBlogImage),
   uploadCategoryImageCtrl
 );
 

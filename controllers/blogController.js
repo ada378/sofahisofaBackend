@@ -83,13 +83,22 @@ export const createBlog = async (req, res) => {
   try {
     const { title, slug, category, author, tags, featuredImage, excerpt, content, faqs, status, metaTitle, metaDescription } = req.body;
 
-    if (!title || !content) return res.status(400).json({ message: "Title and content are required" });
+    const finalTitle = (title || metaTitle || "").trim();
+    if (!finalTitle || !content) return res.status(400).json({ message: "Meta Title and content are required" });
 
     const blog = new Blog({
-      title, slug, category, author, tags,
-      featuredImage, excerpt, content, faqs,
+      title: finalTitle,
+      slug,
+      category,
+      author,
+      tags,
+      featuredImage,
+      excerpt: excerpt || metaDescription || "",
+      content,
+      faqs,
       status: status || "draft",
-      metaTitle, metaDescription,
+      metaTitle: metaTitle || finalTitle,
+      metaDescription: metaDescription || excerpt || "",
     });
 
     await blog.save();
@@ -108,6 +117,13 @@ export const updateBlog = async (req, res) => {
 
     const fields = ["title", "slug", "category", "author", "tags", "featuredImage", "excerpt", "content", "faqs", "status", "metaTitle", "metaDescription"];
     fields.forEach(f => { if (req.body[f] !== undefined) blog[f] = req.body[f]; });
+
+    if (req.body.metaTitle && !req.body.title) {
+      blog.title = req.body.metaTitle;
+    }
+    if (req.body.metaDescription && !req.body.excerpt) {
+      blog.excerpt = req.body.metaDescription;
+    }
 
     await blog.save();
     res.json({ message: "Blog updated", blog });
