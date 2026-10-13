@@ -54,7 +54,13 @@ app.use(cors({
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 app.use(mongoSanitize());
-app.use(xss());
+// Protect against XSS, but preserve rich-text HTML for blog content
+app.use((req, res, next) => {
+  if (req.originalUrl && req.originalUrl.startsWith("/api/blogs")) {
+    return next();
+  }
+  xss()(req, res, next);
+});
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 300 });

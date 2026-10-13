@@ -77,6 +77,24 @@ export const getBlogById = async (req, res) => {
   }
 };
 
+// Helper to decode escaped HTML entities and strip dangerous scripts
+const sanitizeBlogContent = (raw) => {
+  if (!raw || typeof raw !== "string") return raw;
+  let cleaned = raw;
+  // If content contains entity-encoded HTML tags (e.g. &lt;h1, &lt;p, etc.), decode them
+  if (/&lt;(?:h[1-6]|p|div|span|ul|ol|li|strong|b|em|i|a|table|blockquote|img)\b/i.test(cleaned)) {
+    cleaned = cleaned
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&amp;/g, "&");
+  }
+  // Strip malicious scripts
+  cleaned = cleaned.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+  return cleaned;
+};
+
 // @desc    Create blog
 // @route   POST /api/blogs
 export const createBlog = async (req, res) => {
@@ -86,6 +104,8 @@ export const createBlog = async (req, res) => {
     const finalTitle = (title || metaTitle || "").trim();
     if (!finalTitle || !content) return res.status(400).json({ message: "Meta Title and content are required" });
 
+    const cleanContent = sanitizeBlogContent(content);
+
     const blog = new Blog({
       title: finalTitle,
       slug,
@@ -94,7 +114,7 @@ export const createBlog = async (req, res) => {
       tags,
       featuredImage,
       excerpt: excerpt || metaDescription || "",
-      content,
+      content: cleanContent,
       faqs,
       status: status || "draft",
       metaTitle: metaTitle || finalTitle,
@@ -116,7 +136,15 @@ export const updateBlog = async (req, res) => {
     if (!blog) return res.status(404).json({ message: "Blog not found" });
 
     const fields = ["title", "slug", "category", "author", "tags", "featuredImage", "excerpt", "content", "faqs", "status", "metaTitle", "metaDescription"];
-    fields.forEach(f => { if (req.body[f] !== undefined) blog[f] = req.body[f]; });
+    fields.forEach(f => {
+      if (req.body[f] !== undefined) {
+        if (f === "content") {
+          blog.content = sanitizeBlogContent(req.body.content);
+        } else {
+          blog[f] = req.body[f];
+        }
+      }
+    });
 
     if (req.body.metaTitle && !req.body.title) {
       blog.title = req.body.metaTitle;
