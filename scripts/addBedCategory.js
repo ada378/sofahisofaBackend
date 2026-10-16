@@ -29,7 +29,7 @@ async function addBedCategory() {
       const result = await Category.create({
         name: 'Bed',
         slug: 'bed',
-        description: 'Luxury beds and bedroom furniture',
+        description: 'Luxury beds and bedroom furniture in Lucknow',
         order: 2
       });
       console.log('✅ Bed category added with ID:', result._id);

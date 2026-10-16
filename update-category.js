@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
-require('dotenv').config();
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
 
 async function updateCategory() {
   try {
@@ -7,20 +8,19 @@ async function updateCategory() {
     console.log('Connected to DB');
     
     const db = mongoose.connection.db;
-    const result = await db.collection('categories').updateOne(
-      { slug: { $in: ['watches', 'watches-and-clocks'] } },
-      { 
-        $set: { 
-          name: 'Clocks', 
-          slug: 'clocks', 
-          description: 'Luxury wall clocks', 
-          metaTitle: 'Clocks Collection | Buy Online Direct from Factory | Sofa Hi Sofa', 
-          metaDescription: 'Luxury wall clocks' 
-        } 
-      }
-    );
     
-    console.log('Update result:', result);
+    const r1 = await db.collection('categories').updateOne(
+      { slug: 'sofa' },
+      { $set: { heading: 'Best Sofa In Lucknow' } }
+    );
+    console.log('Sofa update:', r1);
+
+    const r2 = await db.collection('categories').updateOne(
+      { slug: 'bed' },
+      { $set: { heading: 'Best Bed In Lucknow' } }
+    );
+    console.log('Bed update:', r2);
+
     process.exit(0);
   } catch (err) {
     console.error(err);

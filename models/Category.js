@@ -8,6 +8,7 @@ const categorySchema = new mongoose.Schema(
     parent: { type: mongoose.Schema.Types.ObjectId, ref: "Category", default: null },
     image: { url: String, alt: String },
     description: { type: String },
+    heading: { type: String },
     metaTitle: String,
     metaDescription: String,
     order: { type: Number, default: 0 }, // controls menu order
